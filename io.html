@@ -1,0 +1,410 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="The blog and portfolio of a freelance Haskell coder">
+
+    <!-- Viewport for responsive web design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Therewillbecode</title>
+
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com/">
+
+    <!-- PWA service worker -->
+    <script src="../../static/js/app.js"></script>
+
+    <!-- Web Application Manifest -->
+    <link rel="manifest" href="../static/js/manifest.json">
+
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-config" content="browserconfig.xml">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Web Starter Kit">
+    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+
+    <!-- Apple Touch Icon (at least 200x200px) -->
+    <link rel="apple-touch-icon" href="/custom-icon.png">
+
+    <!-- To run web application in full-screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <!-- Status Bar Style (see Supported Meta Tags below for available values) -->
+    <!-- Has no effect unless you have the previous meta tag -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#2F3BA2">
+
+    <!-- Color the status bar on mobile devices -->
+    <meta name="theme-color" content="#2F3BA2">
+
+    <!-- syntax highlighting-->
+    <link rel="stylesheet" href="../../static/vendor/css/prism.css">
+    <script src="../../static/vendor/js/prism.js"></script>
+
+
+    <!-- main styles -->
+    <link rel="stylesheet" href="../../static/css/main.css">
+</head>
+
+<body>
+    <nav>
+        <ul class="container">
+            <li class="nav__title ">
+                therewillbecode
+            </li>
+            <li class="nav__item"><a href="/pages/portfolio.html">Portfolio</a></li>
+            <li class="nav__item"><a href="/pages/blog.html">Blog</a></li>
+            <li class="nav__item"><a href="/pages/me.html">Me</a></li>
+            <li class="nav__item__social>"><a href="http://www.github.com/therewillbecode" target="_blank"><img
+                        width="30px" src="../../static/icons/github.svg" /></a>
+            </li>
+        </ul>
+    </nav>
+
+    <article>
+
+        <div class="post-piece">
+            <div class="post-heading-container">
+                <h2 class="post-title">The IO Monad</h2>
+                <h5 class="post-timestamp">12th April 2020
+                </h5>
+            </div>
+            <div class="post-content">
+
+                <p>If haskell is a pure functional language then how does anything get done?</p>
+                <p>Useful programs need to perform input/output or I/O if there are to interact with the outside world.
+                    How else would a program read files, print to the screen and interact with the external
+                    world.
+                    I/O is the process of responding to input signals from the external world and responding with output
+                    signals.
+                </p>
+                <p>Haskell is a
+                    purely functional language. Let's define purity.</p>
+                <br />
+                <blockquote>
+
+                    Purity is the property of functions which when given the same input always return the same
+                    output.
+
+                </blockquote>
+                <br />
+                <p> Pure functions can't modify anything externally. To do so would be performing a side effect. Think
+                    of side effects as <i>outside</i> effects from the point of view of <i>inside</i> a function.
+
+                </p>
+                <p>Wait. Printing to the screen or
+                    making a network request require side effects.</p>
+                <p> This is where the confusion sets in.
+                </p>
+                <p>Bewildered, some say OK everything in Haskell is pure apart from IO.</p>
+
+                <p> Yet
+                    the truth is rarely black and
+                    white and this case is no exception.
+                </p>
+
+                <p>
+                    If you want to understand how IO is pure in Haskell you need to traverse different levels of
+                    abstraction.
+                    If you want to take the red pill read further. Otherwise you can take the blue pill and wake up as
+                    if nothing ever happened.
+                </p>
+
+
+                <p>Still with me. Good! Now I have a mantra for you to chant in the likely event you experience
+                    discomfort on the
+                    way down the rabbit hole.</p>
+
+
+                <p>
+                    Let's start by looking at an IO value. Look at the type of <code>getLine</code>.
+                </p>
+
+                <pre><code class= "language-haskell">getLine :: IO String</code></pre>
+
+                <br />
+                <p>
+                    Haskell uses pure values to represent effectful computations. This value is pure like 3. This is
+                    unusual amongst programming languages. Amongst programming languages, IO is not commonly first
+                    class. That is generally IO values doesn't have equal status to other values.
+                </p>
+
+
+                <p>We know which pure values in are program can perform side effects when executed just by looking
+                    at the type signature.</p>
+
+
+
+                <p> It is a value of type <code>IO String</code>.
+                    <code>IO</code> tells us that side effects will happen when the
+                    program is executed. However the haskell program doesn't know anything about this to the Haskell
+                    compiler
+                    this is just a pure value like any other.
+
+                    Whereas
+                    <code>String</code> tells us that the type of the value which will be
+                    yielded
+                    by the I/O operation will be a when <i> executed</i>. This value represents an impure thing -
+                    reading a line of input - but in a
+                    pure way.
+                </p>
+
+
+                <p>
+                    It doesn't make sense to talk about
+                    executing operations which can have side effects in Haskell.
+                    other operations such as <code>2 + 2</code>. The language only knows about the evaluation.
+                    There is no notion of a side effect in Haskell.
+                </p>
+                <br />
+                <h5>Evaluation is what we do to expressions to produce values.</h5>
+
+
+                <p>
+                    It is important to distinguish evaluation from execution of Haskell programs.
+                    Evaluating an IO value can't print to a screen or write to a file. You can evaluate an IO value
+                    <i>without</i> executing it.
+                </p>
+
+
+                <h5>IO is an interface between pure haskell programs and the impure programming language that is the
+                    runtime system.
+                </h5>
+                <br />
+
+
+                <p>
+                    In Haskell IO values are the interface to managing the impure I/O operations performed by the
+                    Haskell run time system. Think of the runtime as an interpreter.
+
+                    This is the sense in which Simon Peyton Jones jokingly refers to Haskell as "world's finest
+                    imperative programming language".
+                </p>
+                <p>Although Haskell isn't imperative you can still use the language
+                    to do
+                    imperative things.
+
+                </p>
+                <p>
+                    Haskell code once compiled taks with the operating system through the Haskell runtime. It is the
+                    runtime system wrapping our compiled Haskell program with uses system calls to interface with the OS
+                    and do impure things like IO
+                    such as writing to a file.
+
+                </p>
+
+                <p>There is a common misconception that somehow monads enforce purity.</p>
+                <p>Monads don't enforce purity in any way.
+                </p>
+                <h5>In fact, purity isn't enforced in Haskell, rather impurity was
+                    never added in the first place.
+                </h5>
+                <br />
+                <p>
+                    From day one IO has been pure in Haskell, long before monadic I/O were introduced.
+                </p>
+
+
+                <p>Before monadic I/O the C program which is our runtime system would repeatedly take requests for
+                    IO
+                    actions from the main function and
+                    feed them back in
+                </p>
+                <pre><code class= "language-haskell">main :: [Response] -> [Request]</code></pre>
+                <p>On first glance how think how could this ever have worked? How can responses to I/O operations
+                    come
+                    before requests. I/O is an acronym for input and output not the other way around.
+                </p>
+                <p>
+                    The answer is laziness.
+                </p>
+                <p>Now the topic of laziness would warrant a lengthy blog post, so I won't be able to fully explain
+                    it
+                    here.
+                    So here is a brief summary.</p>
+                <br />
+                <blockquote>Lazy evaluation is a code execution mechanism which defers the evaluation of an
+                    expression
+                    until its value is needed. </blockquote>
+                <br />
+                <p>
+                    Back then you would pair elements in <code>[request]</code> and <code>[response]</code> through
+                    their indexes. Same
+                    positions, same
+                    I/O operation.
+                    Because of laziness we can access one of the results of an IO operation in [response] even when
+                    the
+                    other values have not being computed yet.
+                    This all makes IO very unsafe as if you try and access a response which hasn't been computed
+                    then
+                    your program will crash at runtime.
+                </p>
+
+
+                <p>The C program which comprises the "runtime system" wraps our program and we delegate all the
+                    impure operations to this C program which wraps the Haskell program.</p>
+
+                <p> Haskell programs were still pure then and they are now even though the type of our main function
+                    has
+                    changed to this</p>
+                <pre><code class= "language-haskell">main :: IO a </code></pre>
+
+
+                </p>
+                <p>
+                    The Haskell runtime knows what a side effect is and runs impure operations and does
+                    mutability all over the place.
+                    if we want to read a file then the C program which is the runtime makes a system call to the
+                    operating system. The haskell program
+                    is oblivious to this.
+
+                </p>
+                <h5> The base Haskell language is exclusively about evaluation. Execution is
+                    something that the runtime does.</h5>
+
+                <br />
+                <blockquote>
+                    "Progress is possible only if we train ourselves to think about
+                    programs without thinking of them as pieces of executable code." - E. Djikstra
+                </blockquote>
+
+                <br />
+                <p>I don't know about you but I am with Djikstra.</p>
+
+                <p>
+                    Mainstream languages often look at programs as executable code. They don't draw a line between
+                    evaluation and execution of programs. Instead they
+                    accept that I/O can happen anywhere in a program. You can tell by the types in a Haskell program
+                    where IO can and cannot occur on execution.
+                </p>
+
+                <p>So why separate evaluation and execution at all? Why is this model in any way more useful than
+                    the model where we blur the line
+                    and just say they are the same thing?
+                </p>
+                <p>This separation is useful because then we can represent impure operations as pure values. This
+                    means that anything
+                    we can do with normal values we can do with these IO values representing impure operations.
+                </p>
+
+                <p> As a result our language has more expressive power. For example we can write control structures
+                    that influence the control flow of a program
+                    as a library. Lets look at an example.
+                </p>
+
+
+                <p>
+                    We can put IO values in a list in the same way as a collection of <code>Int</code>.
+                    Lets do for loops.
+
+                </p>
+                <pre>
+                    <code class="language-haskell">
+for :: [a] -> (a -> IO ()) -> IO ()
+for [] fa = return ()
+for (n:ns) fa = fa n >> for ns fa
+</code>
+                </pre>
+                <p>
+                    Here is a function which executes some IO actions in a list. Haskell itself knows nothing of for
+                    loops.
+                    Yet first class IO allows us to build any kind of control structure we like.
+                </p>
+                <p>
+                    Remember
+                    <code>>></code> is used to sequence monadic actions like <code>>>=</code>
+                    but the resulting value of each
+                    effectful computation is
+                    discarded. The body of the for loop runs the monadic IO action solely for effects.
+                </p>
+
+                <blockquote>
+                    The most useful definition of "effect" is a computation which alters its
+                    environment.
+                </blockquote>
+                <p>Here the the environment is the real world. The effect that the IO monad represents is an
+                    imperative operation which interacts with the external world through IO. So <code>>></code> is
+                    basically
+                    the sequencing of IO operations in a way that discards the value yielded from executing some I/O
+                    operation. The only reason this I/O is
+                    being performed is for the side effects that will result.</p>
+                <p> Lets look at another example which runs through the actions in the list in a different way.
+                    While loops are loops that execute some block of code whilst a predicate is true.
+                </p>
+
+                <pre>
+             <code class="language-haskell">
+whileM_ :: IO Bool -> IO a -> IO ()
+whileM_ p f = do
+          x <- p
+          if x
+              then f >> whileM_
+              else return ()
+                    </code></pre>
+                <p>
+                    Here
+                    <code>p</code> is an monadic computation which produces a value of type <code>m Bool</code>.
+                    This value is our predicate within the while loop.
+                    In other words, p is a monadic value which when executed yields a boolean value. The predicate
+                    determines if we continue or abort the loop.
+
+                    Interestingly, <code>p</code> is not the predicate itself. It is a IO action which when executed
+                    will produce a predicate.
+                    So <code>p</code> could be constructed from the IO value <code>getLine</code> we initially
+                    looked at which represents the operation of
+                    retrieving a string of characters from std input.
+                </p>
+
+
+                <p>Oh wait what is this?</p>
+                <pre><code class= "language-haskell">unsafePerformIO :: IO a -> a </code></pre>
+                <p>This function doesn't make sense under our mental model.
+                    It defiantly blurs the distinction between evaluation and
+                    execution. Hence the words "unsafe". This function allows you to get the resulting value from an
+                    IO action by evaluating it. No execution in sight. This shouldn't be possible right?
+                </p>
+
+                <p>So you might think at this point,
+                    are we just fooling ourselves by drawing this line if
+                    we can just ignore it like this? No, we ignore other details such as the power that running a program leads a computer to consume.
+                </p>
+
+
+                <h5>Computer science like any science uses models which are simplified representations of
+                    the
+                    world. </h5>
+                <br />
+
+
+                <p>When you first peel back the layers of abstraction you might just say well everything is bits
+                    and bytes. Aren't we fooling ourselves? Well kind of, but it is not that simple.
+                    We are using a model which is a simplified representation of the program's behaviour.
+                </p>
+                <blockquote >A semantics of a program is a model of its behavior which, like any scientific model, ignores aspects that you don't want to study.</blockquote>
+                <a >https://cstheory.stackexchange.com/questions/21257/what-exactly-does-semantically-observable-side-effect-mean/21265#21265</a>
+                <p>
+                    It is crucial to be aware of the different kinds of models you could use at any one time when
+                    looking at code. Every programming language has its own semantics and therefore its own model of program behaviour.
+                </p>
+                <p>When we say Haskell is a pure language, the purity comes from the fact that I/O operations are outside of model of a Haskell program
+                     as determined by the semantics of the Haskell programming language.</p>
+
+            </div>
+
+        </div>
+    </article>
+
+</body>
+
+</html>
